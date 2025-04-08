@@ -63,4 +63,26 @@ jobs:
           app-name: 'ibmec-ecommerce-app'
           slot-name: 'Production'
           package: '*.jar'
+
+      - name: Download OpenAPI spec file
+        run: |
+          # Espera alguns segundos para a aplicação iniciar
+          sleep 30
+          # Baixa o arquivo de especificação OpenAPI da sua aplicação
+          curl -o api-spec.json https://ibmec-ecommerce-app.azurewebsites.net/api-docs
+
+      - name: Update API Management
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            # Importa a especificação para o API Management
+            az apim api import \
+              --resource-group ibmec-ecommerce-rg \
+              --service-name ibmec-mall-api \
+              --api-id ibmec-ecommerce \
+              --path '/ecommerce' \
+              --display-name 'IBMEC E-commerce API' \
+              --specification-format OpenApiJson \
+              --specification-path api-spec.json \
+              --subscription-required false
           
