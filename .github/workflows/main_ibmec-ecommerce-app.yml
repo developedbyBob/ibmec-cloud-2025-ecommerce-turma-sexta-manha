@@ -67,13 +67,15 @@ jobs:
       - name: Download OpenAPI spec file
         run: |
           # Espera alguns segundos para a aplicação iniciar
-          sleep 30
+          echo "Aguardando aplicação iniciar..."
+          sleep 60
           # Baixa o arquivo de especificação OpenAPI da sua aplicação
-          curl -o api-spec.json https://ibmec-ecommerce-app.azurewebsites.net/api-docs
+          echo "Tentando baixar especificação OpenAPI..."
+          curl -v https://ibmec-ecommerce-app-gydeg9hye0eabpbf.brazilsouth-01.azurewebsites.net/api-docs -o api-spec.json
 
       - name: Update API Management
         uses: azure/cli@v1
-        with:
+        with:  
           inlineScript: |
             # Importa a especificação para o API Management
             az apim api import \
