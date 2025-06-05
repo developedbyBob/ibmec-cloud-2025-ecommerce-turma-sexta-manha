@@ -1,0 +1,541 @@
+openapi: 3.0.0
+info:
+  title: IBMEC E-commerce API Gateway
+  description: API Gateway para o projeto IBMEC E-commerce Cloud
+  version: 1.0.0
+  contact:
+    name: IBMEC
+servers:
+  - url: https://ibmec-ecommerce-sexta.azurewebsites.net
+    description: Backend do E-commerce IBMEC
+
+paths:
+  # Users API
+  /users:
+    get:
+      summary: Listar todos os usuários
+      operationId: getUsers
+      responses:
+        '200':
+          description: Lista de usuários obtida com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Criar novo usuário
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Buscar usuário por ID
+      operationId: getUserById
+      responses:
+        '200':
+          description: Usuário encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado
+    put:
+      summary: Atualizar usuário existente
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado
+    delete:
+      summary: Remover usuário
+      operationId: deleteUser
+      responses:
+        '204':
+          description: Usuário removido com sucesso
+        '404':
+          description: Usuário não encontrado
+  
+  # Address API
+  /users/{id_user}/address:
+    parameters:
+      - name: id_user
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Adicionar endereço ao usuário
+      operationId: addUserAddress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '201':
+          description: Endereço adicionado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado
+  
+  # Credit Card API
+  /users/{id_user}/credit-card:
+    parameters:
+      - name: id_user
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Adicionar cartão ao usuário
+      operationId: addUserCreditCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditCard'
+      responses:
+        '201':
+          description: Cartão adicionado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado
+  
+  /users/{id_user}/credit-card/authorize:
+    parameters:
+      - name: id_user
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Autorizar transação no cartão
+      operationId: authorizeTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':
+          description: Transação autorizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Transação recusada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '404':
+          description: Usuário ou cartão não encontrado
+  
+  # Products API
+  /products:
+    get:
+      summary: Listar todos os produtos
+      operationId: getProducts
+      responses:
+        '200':
+          description: Lista de produtos obtida com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Criar novo produto
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  
+  /products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Buscar produto por ID
+      operationId: getProductById
+      responses:
+        '200':
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Produto não encontrado
+    put:
+      summary: Atualizar produto existente
+      operationId: updateProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Produto não encontrado
+    delete:
+      summary: Remover produto
+      operationId: deleteProduct
+      responses:
+        '204':
+          description: Produto removido com sucesso
+        '404':
+          description: Produto não encontrado
+  
+  # Orders API
+  /orders:
+    post:
+      summary: Criar novo pedido
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartRequest'
+      responses:
+        '201':
+          description: Pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Erro na criação do pedido
+  
+  /orders/user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Listar pedidos por usuário
+      operationId: getOrdersByUser
+      responses:
+        '200':
+          description: Lista de pedidos obtida com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: Usuário não encontrado
+  
+  /orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Buscar pedido por ID
+      operationId: getOrderById
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Pedido não encontrado
+  
+  # Reports API
+  /relatorio-vendas:
+    get:
+      summary: Gerar relatório de vendas
+      operationId: getSalesReport
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Relatório gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        dtNascimento:
+          type: string
+          format: date-time
+        cpf:
+          type: string
+        telefone:
+          type: string
+        cartoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCard'
+        enderecos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+    
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+        logradouro:
+          type: string
+        complemento:
+          type: string
+        bairro:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        cep:
+          type: string
+    
+    CreditCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        numero:
+          type: string
+        dtExpiracao:
+          type: string
+          format: date-time
+        cvv:
+          type: string
+        saldo:
+          type: number
+          format: double
+    
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        productCategory:
+          type: string
+        productName:
+          type: string
+        price:
+          type: number
+          format: double
+        imageUrl:
+          type: array
+          items:
+            type: string
+        productDescription:
+          type: string
+    
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: integer
+        orderDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [PENDING, PAID, SHIPPED, DELIVERED, CANCELLED]
+        totalAmount:
+          type: number
+          format: double
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        shippingAddress:
+          type: string
+        paymentInfo:
+          type: string
+        transactionId:
+          type: string
+    
+    OrderItem:
+      type: object
+      properties:
+        productId:
+          type: string
+        productName:
+          type: string
+        unitPrice:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        subTotal:
+          type: number
+          format: double
+    
+    CartItem:
+      type: object
+      properties:
+        productId:
+          type: string
+        productName:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+    
+    CartRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        cartaoId:
+          type: string
+    
+    OrderResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+        status:
+          type: string
+        orderDate:
+          type: string
+          format: date-time
+        totalAmount:
+          type: number
+          format: double
+        message:
+          type: string
+    
+    TransactionRequest:
+      type: object
+      properties:
+        numero:
+          type: string
+        dtExpiracao:
+          type: string
+          format: date-time
+        cvv:
+          type: string
+        valor:
+          type: number
+          format: double
+    
+    TransactionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        codigoAutorizacao:
+          type: string
+          format: uuid
+        dtTransacao:
+          type: string
+          format: date-time
+        message:
+          type: string
+
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - jwt: []
