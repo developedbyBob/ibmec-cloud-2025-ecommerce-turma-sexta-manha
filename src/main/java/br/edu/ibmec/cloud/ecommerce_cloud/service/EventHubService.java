@@ -23,7 +23,7 @@ public class EventHubService {
     private static final Logger logger = LoggerFactory.getLogger(EventHubService.class);
     
     // Injeta as configurações do application.properties
-    @Value("${azure.eventhub.connection-string}")
+    @Value("${azure.eventhub.connection_string}")
     private String connectionString;
     
     @Value("${azure.eventhub.name}")
