@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ibmec.cloud.ecommerce_cloud.model.Product;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.cosmos.ProductRepository;
-
 
 @RestController
 @RequestMapping("/products")
@@ -57,6 +57,20 @@ public class ProductController {
         repository.findAll().forEach(result::add);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    // ===== NOVO ENDPOINT - PESQUISA POR NOME =====
+    @GetMapping("/search")
+    public ResponseEntity<Iterable<Product>> findByProductName(@RequestParam("productName") String productName) {
+        // Busca produtos que contenham o nome fornecido
+        Optional<List<Product>> optProducts = this.repository.findByProductNameContains(productName);
+        
+        if (optProducts.isEmpty() || optProducts.get().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(optProducts.get(), HttpStatus.OK);
+    }
+    // ============================================
 
     @PutMapping("{id}")
     public ResponseEntity<Product> update(@PathVariable String id, @RequestBody Product product) {
